@@ -1,1 +1,3 @@
-This is Stm32 course _MIPT
+# STM32_MIPT
+
+This is Stm32_course
