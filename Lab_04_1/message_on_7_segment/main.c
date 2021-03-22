@@ -134,8 +134,6 @@ void dynamic_text(char line[])
 		}
 		
 		c = line[i++];
-
-		//if(c == '\0') c = ' ';
 		
 		//it's necessary to make the text reach the end of the indicator
 		if(c == '\0' || last_cnt != 0 )
@@ -233,7 +231,6 @@ int main(void)
 	while(1)
 	{
 		
-		
 		for(int i = 0; i < 3000; i++)
 		{
 			dyn_display(0x2021);
@@ -244,9 +241,8 @@ int main(void)
 		dynamic_text("phystech_labs and...");
 		//text("abcd");
 		text(" ");
-
-		dynamic_text("biba_boba");
 		
+		dynamic_text("biba_boba");
 		
 		for(int i = 0; i < 0xffff; i++)
 		{
@@ -256,8 +252,6 @@ int main(void)
 		
 		for(int i = 0; i < 1000; i++)
 			text("cool");
-
-		dynamic_text("press_f");
 
 	}
 

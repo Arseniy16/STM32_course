@@ -32,7 +32,7 @@ static void gpio_config(void)
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_8, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_9, LL_GPIO_MODE_OUTPUT);
 
-    //Init 7-segment indicotor full
+    //Init 7-segment indicator full
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_0, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_1, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_2, LL_GPIO_MODE_OUTPUT);
@@ -66,23 +66,7 @@ __attribute__((naked)) static void delay(void)
     //asm (".word 0xea60"); //6000(10ms)
 }
 
-void show_display(uint16_t number, uint16_t digit)
-{
-	LL_GPIO_WriteOutputPort(GPIOB, 0b00000000);
-	switch(number)
-	{
-		case 0: LL_GPIO_WriteOutputPort(GPIOC, 0b0111); break;
-		case 1: LL_GPIO_WriteOutputPort(GPIOC, 0b1011); break;
-		case 2: LL_GPIO_WriteOutputPort(GPIOC, 0b1101); break;
-		case 3: LL_GPIO_WriteOutputPort(GPIOC, 0b1110); break;
-		default: break;
-
-	}
-	show_digit(digit);
-	return;
-}
-
-void show_digit(uint16_t x)
+static void show_digit(uint16_t x)
 {
 	
 	switch(x)
@@ -110,58 +94,43 @@ void show_digit(uint16_t x)
 
 }
 
+static void show_display(uint16_t number, uint16_t digit)
+{
+	LL_GPIO_WriteOutputPort(GPIOB, 0b00000000);
+	switch(number)
+	{
+		case 0: LL_GPIO_WriteOutputPort(GPIOC, 0b0111); break;
+		case 1: LL_GPIO_WriteOutputPort(GPIOC, 0b1011); break;
+		case 2: LL_GPIO_WriteOutputPort(GPIOC, 0b1101); break;
+		case 3: LL_GPIO_WriteOutputPort(GPIOC, 0b1110); break;
+		default: break;
 
+	}
+	show_digit(digit);
+	return;
+}
+
+
+//This program shows digit increasing value and shifting on 1 position 
 int main(void)
 {
 	rcc_config();
 	gpio_config();
+	
 	uint16_t i = 0;
+	
 	while(1)
 	{
 			
 		if(i > 15) i = 0;
+
 		for(uint16_t j = 0; j < 4; j++, i++)
 		{
 			show_display(j, i);
 			delay();
-		}	
-
+		}
 	}
 
-/*
-	uint32_t status = 0, count = 0, flag = 0;
-    while (1)
-    {
-    	
-    	if(count > 15) count = 0;
-    
-    	status = 0;
-    	while((status < 5) && (LL_GPIO_IsInputPinSet(GPIOA, LL_GPIO_PIN_0)) ) 
-        {
-           	
-            delay();
-            status++;
-        }
-
-       if(status >= 5 )
-       {
-       		
-       		if(flag == 0)
-       		{
-       			
-          		LL_GPIO_ResetOutputPin(GPIOB, 0b01111111);
-          		show_digit(count);
-          		LL_GPIO_TogglePin(GPIOC, LL_GPIO_PIN_9);
-          		count++;
-          		flag = 1;
-       		}
-
-       }
-       
-       else flag = 0;	 
-    }
-
-*/
     return 0;
 }
 

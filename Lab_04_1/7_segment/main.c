@@ -32,6 +32,14 @@ static void gpio_config(void)
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_8, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_9, LL_GPIO_MODE_OUTPUT);
+
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_0, LL_GPIO_MODE_OUTPUT);
+    /*
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_1, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_2, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_3, LL_GPIO_MODE_OUTPUT);
+    */
+
     /*
      * Init port for indicator
      */
@@ -43,6 +51,7 @@ static void gpio_config(void)
      * Init 7_segment indicator
      */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
+
 
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_0, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_1, LL_GPIO_MODE_OUTPUT);
@@ -100,14 +109,14 @@ int main(void)
 	rcc_config();
 	gpio_config();
 
-	LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_7);
+	LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_0);
 
 	uint32_t status = 0, count = 0, flag = 0;
 
     while (1)
     {
-    	
-    	if(count > 15) count = 0;
+
+        if(count > 15) count = 0;
     
     	//processing bounce-contact of button USER
     	status = 0;
@@ -118,22 +127,30 @@ int main(void)
             status++;
         }
 
-       	if(status >= 5 )
-       	{
-       	//when we put on the button USER the 7_segment indicator increase value by 1	
-   			if(flag == 0)
-       		{
-       			count++;
-          		LL_GPIO_ResetOutputPin(GPIOB, 0b01111111);
-          		show_digit(count);
-          		LL_GPIO_TogglePin(GPIOC, LL_GPIO_PIN_9);
-          		flag = 1;
-       		}
 
-       	}
-       
-		else flag = 0;	 
+        //if button is really was pressed
+        if(status >= 5 )
+        {
+
+            //when we put on the button USER the 7_segment indicator increase value by 1	
+       		if(flag == 0)
+           	{
+
+                show_digit(count);
+
+                count++;
+                
+                LL_GPIO_TogglePin(GPIOC, LL_GPIO_PIN_9);
+                
+                flag = 1;
+           	}
+
+        }
+           
+    	else flag = 0;	 
+        
     }
+
     return 0;
 }
 

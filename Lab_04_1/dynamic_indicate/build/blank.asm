@@ -12,15 +12,15 @@ Idx Name              Size      VMA       LMA       File off  Algn  Flags
   6 .bss              00000020  20000434  08000d1c  00020434  2**2  ALLOC
   7 ._user_heap_stack 00000604  20000454  08000d1c  00020454  2**0  ALLOC
   8 .ARM.attributes   00000028  00000000  00000000  00020434  2**0  CONTENTS, READONLY
-  9 .debug_info       00000935  00000000  00000000  0002045c  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
- 10 .debug_abbrev     0000034a  00000000  00000000  00020d91  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
- 11 .debug_loc        000004b0  00000000  00000000  000210db  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
- 12 .debug_aranges    00000110  00000000  00000000  0002158b  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_ranges     000000e0  00000000  00000000  0002169b  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_line       000005de  00000000  00000000  0002177b  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_str        00000567  00000000  00000000  00021d59  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .comment          000000cc  00000000  00000000  000222c0  2**0  CONTENTS, READONLY
- 17 .debug_frame      000004d0  00000000  00000000  0002238c  2**2  CONTENTS, READONLY, DEBUGGING, OCTETS
+  9 .debug_info       00000923  00000000  00000000  0002045c  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 10 .debug_abbrev     00000330  00000000  00000000  00020d7f  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 11 .debug_loc        000004b0  00000000  00000000  000210af  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 12 .debug_aranges    00000110  00000000  00000000  0002155f  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 13 .debug_ranges     000000e0  00000000  00000000  0002166f  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 14 .debug_line       000005de  00000000  00000000  0002174f  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_str        0000056b  00000000  00000000  00021d2d  2**0  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .comment          000000cc  00000000  00000000  00022298  2**0  CONTENTS, READONLY
+ 17 .debug_frame      000004d0  00000000  00000000  00022364  2**2  CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
 
@@ -513,180 +513,180 @@ Disassembly of section .text:
  80004a0:	48000800 	.word	0x48000800
  80004a4:	48000400 	.word	0x48000400
 
-080004a8 <delay_10ms>:
+080004a8 <delay>:
  80004a8:	b580      	push	{r7, lr}
- 80004aa:	4e02      	ldr	r6, [pc, #8]	; (80004b4 <delay_10ms+0xc>)
+ 80004aa:	4e02      	ldr	r6, [pc, #8]	; (80004b4 <delay+0xc>)
  80004ac:	3e01      	subs	r6, #1
  80004ae:	2e00      	cmp	r6, #0
- 80004b0:	d1fc      	bne.n	80004ac <delay_10ms+0x4>
+ 80004b0:	d1fc      	bne.n	80004ac <delay+0x4>
  80004b2:	bd80      	pop	{r7, pc}
  80004b4:	005b8d80 	.word	0x005b8d80
  80004b8:	46c0      	nop			; (mov r8, r8)
 	...
 
-080004bc <show_display>:
+080004bc <show_digit>:
  80004bc:	b580      	push	{r7, lr}
  80004be:	b082      	sub	sp, #8
  80004c0:	af00      	add	r7, sp, #0
  80004c2:	0002      	movs	r2, r0
  80004c4:	1dbb      	adds	r3, r7, #6
  80004c6:	801a      	strh	r2, [r3, #0]
- 80004c8:	1d3b      	adds	r3, r7, #4
- 80004ca:	1c0a      	adds	r2, r1, #0
- 80004cc:	801a      	strh	r2, [r3, #0]
- 80004ce:	4b1a      	ldr	r3, [pc, #104]	; (8000538 <show_display+0x7c>)
- 80004d0:	2100      	movs	r1, #0
- 80004d2:	0018      	movs	r0, r3
- 80004d4:	f7ff ff38 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80004d8:	1dbb      	adds	r3, r7, #6
- 80004da:	881b      	ldrh	r3, [r3, #0]
- 80004dc:	2b03      	cmp	r3, #3
- 80004de:	d01a      	beq.n	8000516 <show_display+0x5a>
- 80004e0:	dc1f      	bgt.n	8000522 <show_display+0x66>
- 80004e2:	2b02      	cmp	r3, #2
- 80004e4:	d011      	beq.n	800050a <show_display+0x4e>
- 80004e6:	dc1c      	bgt.n	8000522 <show_display+0x66>
- 80004e8:	2b00      	cmp	r3, #0
- 80004ea:	d002      	beq.n	80004f2 <show_display+0x36>
- 80004ec:	2b01      	cmp	r3, #1
- 80004ee:	d006      	beq.n	80004fe <show_display+0x42>
- 80004f0:	e017      	b.n	8000522 <show_display+0x66>
- 80004f2:	4b12      	ldr	r3, [pc, #72]	; (800053c <show_display+0x80>)
- 80004f4:	2107      	movs	r1, #7
+ 80004c8:	1dbb      	adds	r3, r7, #6
+ 80004ca:	881b      	ldrh	r3, [r3, #0]
+ 80004cc:	2b0f      	cmp	r3, #15
+ 80004ce:	d864      	bhi.n	800059a <show_digit+0xde>
+ 80004d0:	009a      	lsls	r2, r3, #2
+ 80004d2:	4b34      	ldr	r3, [pc, #208]	; (80005a4 <show_digit+0xe8>)
+ 80004d4:	18d3      	adds	r3, r2, r3
+ 80004d6:	681b      	ldr	r3, [r3, #0]
+ 80004d8:	469f      	mov	pc, r3
+ 80004da:	4b33      	ldr	r3, [pc, #204]	; (80005a8 <show_digit+0xec>)
+ 80004dc:	213f      	movs	r1, #63	; 0x3f
+ 80004de:	0018      	movs	r0, r3
+ 80004e0:	f7ff ff32 	bl	8000348 <LL_GPIO_WriteOutputPort>
+ 80004e4:	e05a      	b.n	800059c <show_digit+0xe0>
+ 80004e6:	4b30      	ldr	r3, [pc, #192]	; (80005a8 <show_digit+0xec>)
+ 80004e8:	2106      	movs	r1, #6
+ 80004ea:	0018      	movs	r0, r3
+ 80004ec:	f7ff ff2c 	bl	8000348 <LL_GPIO_WriteOutputPort>
+ 80004f0:	e054      	b.n	800059c <show_digit+0xe0>
+ 80004f2:	4b2d      	ldr	r3, [pc, #180]	; (80005a8 <show_digit+0xec>)
+ 80004f4:	215b      	movs	r1, #91	; 0x5b
  80004f6:	0018      	movs	r0, r3
  80004f8:	f7ff ff26 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80004fc:	e012      	b.n	8000524 <show_display+0x68>
- 80004fe:	4b0f      	ldr	r3, [pc, #60]	; (800053c <show_display+0x80>)
- 8000500:	210b      	movs	r1, #11
+ 80004fc:	e04e      	b.n	800059c <show_digit+0xe0>
+ 80004fe:	4b2a      	ldr	r3, [pc, #168]	; (80005a8 <show_digit+0xec>)
+ 8000500:	214f      	movs	r1, #79	; 0x4f
  8000502:	0018      	movs	r0, r3
  8000504:	f7ff ff20 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000508:	e00c      	b.n	8000524 <show_display+0x68>
- 800050a:	4b0c      	ldr	r3, [pc, #48]	; (800053c <show_display+0x80>)
- 800050c:	210d      	movs	r1, #13
+ 8000508:	e048      	b.n	800059c <show_digit+0xe0>
+ 800050a:	4b27      	ldr	r3, [pc, #156]	; (80005a8 <show_digit+0xec>)
+ 800050c:	2166      	movs	r1, #102	; 0x66
  800050e:	0018      	movs	r0, r3
  8000510:	f7ff ff1a 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000514:	e006      	b.n	8000524 <show_display+0x68>
- 8000516:	4b09      	ldr	r3, [pc, #36]	; (800053c <show_display+0x80>)
- 8000518:	210e      	movs	r1, #14
+ 8000514:	e042      	b.n	800059c <show_digit+0xe0>
+ 8000516:	4b24      	ldr	r3, [pc, #144]	; (80005a8 <show_digit+0xec>)
+ 8000518:	216d      	movs	r1, #109	; 0x6d
  800051a:	0018      	movs	r0, r3
  800051c:	f7ff ff14 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000520:	e000      	b.n	8000524 <show_display+0x68>
- 8000522:	46c0      	nop			; (mov r8, r8)
- 8000524:	1d3b      	adds	r3, r7, #4
- 8000526:	881b      	ldrh	r3, [r3, #0]
- 8000528:	0018      	movs	r0, r3
- 800052a:	f000 f809 	bl	8000540 <show_digit>
- 800052e:	46c0      	nop			; (mov r8, r8)
- 8000530:	46bd      	mov	sp, r7
- 8000532:	b002      	add	sp, #8
- 8000534:	bd80      	pop	{r7, pc}
- 8000536:	46c0      	nop			; (mov r8, r8)
- 8000538:	48000400 	.word	0x48000400
- 800053c:	48000800 	.word	0x48000800
-
-08000540 <show_digit>:
- 8000540:	b580      	push	{r7, lr}
- 8000542:	b082      	sub	sp, #8
- 8000544:	af00      	add	r7, sp, #0
- 8000546:	0002      	movs	r2, r0
- 8000548:	1dbb      	adds	r3, r7, #6
- 800054a:	801a      	strh	r2, [r3, #0]
- 800054c:	1dbb      	adds	r3, r7, #6
- 800054e:	881b      	ldrh	r3, [r3, #0]
- 8000550:	2b0f      	cmp	r3, #15
- 8000552:	d864      	bhi.n	800061e <show_digit+0xde>
- 8000554:	009a      	lsls	r2, r3, #2
- 8000556:	4b34      	ldr	r3, [pc, #208]	; (8000628 <show_digit+0xe8>)
- 8000558:	18d3      	adds	r3, r2, r3
- 800055a:	681b      	ldr	r3, [r3, #0]
- 800055c:	469f      	mov	pc, r3
- 800055e:	4b33      	ldr	r3, [pc, #204]	; (800062c <show_digit+0xec>)
- 8000560:	213f      	movs	r1, #63	; 0x3f
+ 8000520:	e03c      	b.n	800059c <show_digit+0xe0>
+ 8000522:	4b21      	ldr	r3, [pc, #132]	; (80005a8 <show_digit+0xec>)
+ 8000524:	217d      	movs	r1, #125	; 0x7d
+ 8000526:	0018      	movs	r0, r3
+ 8000528:	f7ff ff0e 	bl	8000348 <LL_GPIO_WriteOutputPort>
+ 800052c:	e036      	b.n	800059c <show_digit+0xe0>
+ 800052e:	4b1e      	ldr	r3, [pc, #120]	; (80005a8 <show_digit+0xec>)
+ 8000530:	2107      	movs	r1, #7
+ 8000532:	0018      	movs	r0, r3
+ 8000534:	f7ff ff08 	bl	8000348 <LL_GPIO_WriteOutputPort>
+ 8000538:	e030      	b.n	800059c <show_digit+0xe0>
+ 800053a:	4b1b      	ldr	r3, [pc, #108]	; (80005a8 <show_digit+0xec>)
+ 800053c:	217f      	movs	r1, #127	; 0x7f
+ 800053e:	0018      	movs	r0, r3
+ 8000540:	f7ff ff02 	bl	8000348 <LL_GPIO_WriteOutputPort>
+ 8000544:	e02a      	b.n	800059c <show_digit+0xe0>
+ 8000546:	4b18      	ldr	r3, [pc, #96]	; (80005a8 <show_digit+0xec>)
+ 8000548:	216f      	movs	r1, #111	; 0x6f
+ 800054a:	0018      	movs	r0, r3
+ 800054c:	f7ff fefc 	bl	8000348 <LL_GPIO_WriteOutputPort>
+ 8000550:	e024      	b.n	800059c <show_digit+0xe0>
+ 8000552:	4b15      	ldr	r3, [pc, #84]	; (80005a8 <show_digit+0xec>)
+ 8000554:	2177      	movs	r1, #119	; 0x77
+ 8000556:	0018      	movs	r0, r3
+ 8000558:	f7ff fef6 	bl	8000348 <LL_GPIO_WriteOutputPort>
+ 800055c:	e01e      	b.n	800059c <show_digit+0xe0>
+ 800055e:	4b12      	ldr	r3, [pc, #72]	; (80005a8 <show_digit+0xec>)
+ 8000560:	217c      	movs	r1, #124	; 0x7c
  8000562:	0018      	movs	r0, r3
  8000564:	f7ff fef0 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000568:	e05a      	b.n	8000620 <show_digit+0xe0>
- 800056a:	4b30      	ldr	r3, [pc, #192]	; (800062c <show_digit+0xec>)
- 800056c:	2106      	movs	r1, #6
+ 8000568:	e018      	b.n	800059c <show_digit+0xe0>
+ 800056a:	4b0f      	ldr	r3, [pc, #60]	; (80005a8 <show_digit+0xec>)
+ 800056c:	2139      	movs	r1, #57	; 0x39
  800056e:	0018      	movs	r0, r3
  8000570:	f7ff feea 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000574:	e054      	b.n	8000620 <show_digit+0xe0>
- 8000576:	4b2d      	ldr	r3, [pc, #180]	; (800062c <show_digit+0xec>)
- 8000578:	215b      	movs	r1, #91	; 0x5b
+ 8000574:	e012      	b.n	800059c <show_digit+0xe0>
+ 8000576:	4b0c      	ldr	r3, [pc, #48]	; (80005a8 <show_digit+0xec>)
+ 8000578:	215e      	movs	r1, #94	; 0x5e
  800057a:	0018      	movs	r0, r3
  800057c:	f7ff fee4 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000580:	e04e      	b.n	8000620 <show_digit+0xe0>
- 8000582:	4b2a      	ldr	r3, [pc, #168]	; (800062c <show_digit+0xec>)
- 8000584:	214f      	movs	r1, #79	; 0x4f
+ 8000580:	e00c      	b.n	800059c <show_digit+0xe0>
+ 8000582:	4b09      	ldr	r3, [pc, #36]	; (80005a8 <show_digit+0xec>)
+ 8000584:	2179      	movs	r1, #121	; 0x79
  8000586:	0018      	movs	r0, r3
  8000588:	f7ff fede 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 800058c:	e048      	b.n	8000620 <show_digit+0xe0>
- 800058e:	4b27      	ldr	r3, [pc, #156]	; (800062c <show_digit+0xec>)
- 8000590:	2166      	movs	r1, #102	; 0x66
+ 800058c:	e006      	b.n	800059c <show_digit+0xe0>
+ 800058e:	4b06      	ldr	r3, [pc, #24]	; (80005a8 <show_digit+0xec>)
+ 8000590:	2171      	movs	r1, #113	; 0x71
  8000592:	0018      	movs	r0, r3
  8000594:	f7ff fed8 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000598:	e042      	b.n	8000620 <show_digit+0xe0>
- 800059a:	4b24      	ldr	r3, [pc, #144]	; (800062c <show_digit+0xec>)
- 800059c:	216d      	movs	r1, #109	; 0x6d
- 800059e:	0018      	movs	r0, r3
- 80005a0:	f7ff fed2 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80005a4:	e03c      	b.n	8000620 <show_digit+0xe0>
- 80005a6:	4b21      	ldr	r3, [pc, #132]	; (800062c <show_digit+0xec>)
- 80005a8:	217d      	movs	r1, #125	; 0x7d
- 80005aa:	0018      	movs	r0, r3
- 80005ac:	f7ff fecc 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80005b0:	e036      	b.n	8000620 <show_digit+0xe0>
- 80005b2:	4b1e      	ldr	r3, [pc, #120]	; (800062c <show_digit+0xec>)
- 80005b4:	2107      	movs	r1, #7
- 80005b6:	0018      	movs	r0, r3
- 80005b8:	f7ff fec6 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80005bc:	e030      	b.n	8000620 <show_digit+0xe0>
- 80005be:	4b1b      	ldr	r3, [pc, #108]	; (800062c <show_digit+0xec>)
- 80005c0:	217f      	movs	r1, #127	; 0x7f
+ 8000598:	e000      	b.n	800059c <show_digit+0xe0>
+ 800059a:	46c0      	nop			; (mov r8, r8)
+ 800059c:	46c0      	nop			; (mov r8, r8)
+ 800059e:	46bd      	mov	sp, r7
+ 80005a0:	b002      	add	sp, #8
+ 80005a2:	bd80      	pop	{r7, pc}
+ 80005a4:	08000898 	.word	0x08000898
+ 80005a8:	48000400 	.word	0x48000400
+
+080005ac <show_display>:
+ 80005ac:	b580      	push	{r7, lr}
+ 80005ae:	b082      	sub	sp, #8
+ 80005b0:	af00      	add	r7, sp, #0
+ 80005b2:	0002      	movs	r2, r0
+ 80005b4:	1dbb      	adds	r3, r7, #6
+ 80005b6:	801a      	strh	r2, [r3, #0]
+ 80005b8:	1d3b      	adds	r3, r7, #4
+ 80005ba:	1c0a      	adds	r2, r1, #0
+ 80005bc:	801a      	strh	r2, [r3, #0]
+ 80005be:	4b1a      	ldr	r3, [pc, #104]	; (8000628 <show_display+0x7c>)
+ 80005c0:	2100      	movs	r1, #0
  80005c2:	0018      	movs	r0, r3
  80005c4:	f7ff fec0 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80005c8:	e02a      	b.n	8000620 <show_digit+0xe0>
- 80005ca:	4b18      	ldr	r3, [pc, #96]	; (800062c <show_digit+0xec>)
- 80005cc:	216f      	movs	r1, #111	; 0x6f
- 80005ce:	0018      	movs	r0, r3
- 80005d0:	f7ff feba 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80005d4:	e024      	b.n	8000620 <show_digit+0xe0>
- 80005d6:	4b15      	ldr	r3, [pc, #84]	; (800062c <show_digit+0xec>)
- 80005d8:	2177      	movs	r1, #119	; 0x77
- 80005da:	0018      	movs	r0, r3
- 80005dc:	f7ff feb4 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80005e0:	e01e      	b.n	8000620 <show_digit+0xe0>
- 80005e2:	4b12      	ldr	r3, [pc, #72]	; (800062c <show_digit+0xec>)
- 80005e4:	217c      	movs	r1, #124	; 0x7c
+ 80005c8:	1dbb      	adds	r3, r7, #6
+ 80005ca:	881b      	ldrh	r3, [r3, #0]
+ 80005cc:	2b03      	cmp	r3, #3
+ 80005ce:	d01a      	beq.n	8000606 <show_display+0x5a>
+ 80005d0:	dc1f      	bgt.n	8000612 <show_display+0x66>
+ 80005d2:	2b02      	cmp	r3, #2
+ 80005d4:	d011      	beq.n	80005fa <show_display+0x4e>
+ 80005d6:	dc1c      	bgt.n	8000612 <show_display+0x66>
+ 80005d8:	2b00      	cmp	r3, #0
+ 80005da:	d002      	beq.n	80005e2 <show_display+0x36>
+ 80005dc:	2b01      	cmp	r3, #1
+ 80005de:	d006      	beq.n	80005ee <show_display+0x42>
+ 80005e0:	e017      	b.n	8000612 <show_display+0x66>
+ 80005e2:	4b12      	ldr	r3, [pc, #72]	; (800062c <show_display+0x80>)
+ 80005e4:	2107      	movs	r1, #7
  80005e6:	0018      	movs	r0, r3
  80005e8:	f7ff feae 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80005ec:	e018      	b.n	8000620 <show_digit+0xe0>
- 80005ee:	4b0f      	ldr	r3, [pc, #60]	; (800062c <show_digit+0xec>)
- 80005f0:	2139      	movs	r1, #57	; 0x39
+ 80005ec:	e012      	b.n	8000614 <show_display+0x68>
+ 80005ee:	4b0f      	ldr	r3, [pc, #60]	; (800062c <show_display+0x80>)
+ 80005f0:	210b      	movs	r1, #11
  80005f2:	0018      	movs	r0, r3
  80005f4:	f7ff fea8 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 80005f8:	e012      	b.n	8000620 <show_digit+0xe0>
- 80005fa:	4b0c      	ldr	r3, [pc, #48]	; (800062c <show_digit+0xec>)
- 80005fc:	215e      	movs	r1, #94	; 0x5e
+ 80005f8:	e00c      	b.n	8000614 <show_display+0x68>
+ 80005fa:	4b0c      	ldr	r3, [pc, #48]	; (800062c <show_display+0x80>)
+ 80005fc:	210d      	movs	r1, #13
  80005fe:	0018      	movs	r0, r3
  8000600:	f7ff fea2 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000604:	e00c      	b.n	8000620 <show_digit+0xe0>
- 8000606:	4b09      	ldr	r3, [pc, #36]	; (800062c <show_digit+0xec>)
- 8000608:	2179      	movs	r1, #121	; 0x79
+ 8000604:	e006      	b.n	8000614 <show_display+0x68>
+ 8000606:	4b09      	ldr	r3, [pc, #36]	; (800062c <show_display+0x80>)
+ 8000608:	210e      	movs	r1, #14
  800060a:	0018      	movs	r0, r3
  800060c:	f7ff fe9c 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 8000610:	e006      	b.n	8000620 <show_digit+0xe0>
- 8000612:	4b06      	ldr	r3, [pc, #24]	; (800062c <show_digit+0xec>)
- 8000614:	2171      	movs	r1, #113	; 0x71
- 8000616:	0018      	movs	r0, r3
- 8000618:	f7ff fe96 	bl	8000348 <LL_GPIO_WriteOutputPort>
- 800061c:	e000      	b.n	8000620 <show_digit+0xe0>
+ 8000610:	e000      	b.n	8000614 <show_display+0x68>
+ 8000612:	46c0      	nop			; (mov r8, r8)
+ 8000614:	1d3b      	adds	r3, r7, #4
+ 8000616:	881b      	ldrh	r3, [r3, #0]
+ 8000618:	0018      	movs	r0, r3
+ 800061a:	f7ff ff4f 	bl	80004bc <show_digit>
  800061e:	46c0      	nop			; (mov r8, r8)
- 8000620:	46c0      	nop			; (mov r8, r8)
- 8000622:	46bd      	mov	sp, r7
- 8000624:	b002      	add	sp, #8
- 8000626:	bd80      	pop	{r7, pc}
- 8000628:	08000898 	.word	0x08000898
- 800062c:	48000400 	.word	0x48000400
+ 8000620:	46bd      	mov	sp, r7
+ 8000622:	b002      	add	sp, #8
+ 8000624:	bd80      	pop	{r7, pc}
+ 8000626:	46c0      	nop			; (mov r8, r8)
+ 8000628:	48000400 	.word	0x48000400
+ 800062c:	48000800 	.word	0x48000800
 
 08000630 <main>:
  8000630:	b580      	push	{r7, lr}
@@ -714,8 +714,8 @@ Disassembly of section .text:
  8000660:	881b      	ldrh	r3, [r3, #0]
  8000662:	0011      	movs	r1, r2
  8000664:	0018      	movs	r0, r3
- 8000666:	f7ff ff29 	bl	80004bc <show_display>
- 800066a:	f7ff ff1d 	bl	80004a8 <delay_10ms>
+ 8000666:	f7ff ffa1 	bl	80005ac <show_display>
+ 800066a:	f7ff ff1d 	bl	80004a8 <delay>
  800066e:	1d3b      	adds	r3, r7, #4
  8000670:	881a      	ldrh	r2, [r3, #0]
  8000672:	1d3b      	adds	r3, r7, #4
