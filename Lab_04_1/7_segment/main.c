@@ -78,6 +78,8 @@ __attribute__((naked)) static void delay_10ms(void)
     asm (".word 0xea60"); //6000
 }
 
+//TODO: mapping pins
+
 static void show_digit(int x)
 {
 	switch(x)
@@ -113,14 +115,14 @@ int main(void)
 
 	uint32_t status = 0, count = 0, flag = 0;
 
-    while (1)
+    while(1)
     {
 
         if(count > 15) count = 0;
     
-    	//processing bounce-contact of button USER
-    	status = 0;
-    	while((status < 5) && (LL_GPIO_IsInputPinSet(GPIOA, LL_GPIO_PIN_0)) ) 
+        //processing bounce-contact of button USER
+        status = 0;
+        while((status < 5) && (LL_GPIO_IsInputPinSet(GPIOA, LL_GPIO_PIN_0)) ) 
         {
            	
             delay_10ms();
@@ -128,12 +130,12 @@ int main(void)
         }
 
 
-        //if button is really was pressed
+        //if button really was pressed
         if(status >= 5 )
         {
 
-            //when we put on the button USER the 7_segment indicator increase value by 1	
-       		if(flag == 0)
+            //when we put on the button USER the 7_segment indicator increases value by 1	
+       	    if(flag == 0)
            	{
 
                 show_digit(count);
@@ -147,7 +149,7 @@ int main(void)
 
         }
            
-    	else flag = 0;	 
+        else flag = 0;	 
         
     }
 

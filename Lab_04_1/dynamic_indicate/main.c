@@ -68,7 +68,6 @@ __attribute__((naked)) static void delay(void)
 
 static void show_digit(uint16_t x)
 {
-	
 	switch(x)
 	{
 		case 0: LL_GPIO_WriteOutputPort(GPIOB, 0b00111111); break;
@@ -91,7 +90,6 @@ static void show_digit(uint16_t x)
 
 	}
 	return;
-
 }
 
 static void show_display(uint16_t number, uint16_t digit)
@@ -109,7 +107,6 @@ static void show_display(uint16_t number, uint16_t digit)
 	show_digit(digit);
 	return;
 }
-
 
 //This program shows digit increasing value and shifting on 1 position 
 int main(void)

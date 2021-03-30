@@ -1,47 +1,81 @@
-
+/*
+ * This project is for using 7_segment indicator.
+ */
 #include <stm32f0xx_ll_rcc.h>
 #include <stm32f0xx_ll_system.h>
 #include <stm32f0xx_ll_bus.h>
 #include <stm32f0xx_ll_gpio.h>
 
+/**
+  * System Clock Configuration
+  * The system Clock is configured as follow :
+  *    System Clock source            = PLL (HSI/2)
+  *    SYSCLK(Hz)                     = 48000000
+  *    HCLK(Hz)                       = 48000000
+  *    AHB Prescaler                  = 1
+  *    APB1 Prescaler                 = 1
+  *    HSI Frequency(Hz)              = 8000000
+  *    PLLMUL                         = 12
+  *    Flash Latency(WS)              = 1
+  */
 static void rcc_config()
 {
-	LL_FLASH_SetLatency(LL_FLASH_LATENCY_0);
+    /* Set FLASH latency */
+    LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
 
-	LL_RCC_HSI_Enable();
-	while(LL_RCC_HSI_IsReady() != 1) ;
+    /* Enable HSI and wait for activation*/
+    LL_RCC_HSI_Enable();
+    while (LL_RCC_HSI_IsReady() != 1);
 
-	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI_DIV_2, LL_RCC_PLL_MUL_12);
-	LL_RCC_PLL_Enable();
-	while(LL_RCC_PLL_IsReady() != 1) ;
+    /* Main PLL configuration and activation */
+    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI_DIV_2,
+                                LL_RCC_PLL_MUL_12);
 
-	LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
-	LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
-	while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL ) ;
+    LL_RCC_PLL_Enable();
+    while (LL_RCC_PLL_IsReady() != 1);
 
-	LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
+    /* Sysclk activation on the main PLL */
+    LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
+    LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
+    while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL);
 
-	 SystemCoreClock = 48000000;
+    /* Set APB1 prescaler */
+    LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
 
+    /* Update CMSIS variable (which can be updated also
+     * through SystemCoreClockUpdate function) */
+    SystemCoreClock = 48000000;
 }
 
+/*
+ * Clock on GPIOC, GPIOB and GPIOA
+ * Set pins on leds, button and indicator
+ */
 static void gpio_config(void)
 {
-
+	/*
+     * Init two default LEDs
+     */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_8, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_9, LL_GPIO_MODE_OUTPUT);
-
+    /*
+   	 * Init main ports for indicators
+   	 * from MSB to LSB -> 3_2_1_0	 
+    */
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_0, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_1, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_2, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_3, LL_GPIO_MODE_OUTPUT);
-    
+    /*
+     * Init port for USER button
+     */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
     LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_0, LL_GPIO_MODE_INPUT);
-
+    /*
+     * Init ports for indicator
+     */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
-
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_0, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_1, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_2, LL_GPIO_MODE_OUTPUT);
@@ -53,7 +87,9 @@ static void gpio_config(void)
 
     return;
 }
-
+/*
+ * Just set of commands to waste CPU power for 2ms
+ */
 __attribute__((naked)) void delay(void)
 {
     asm ("push {r7, lr}");
@@ -62,28 +98,42 @@ __attribute__((naked)) void delay(void)
     asm ("cmp r6, #0");
     asm ("bne delay+0x4");
     asm ("pop {r7, pc}");
+    asm (".word 0x2ee0"); //12000 (2ms)
     //asm (".word 0x5b8d80"); //1sec
-    asm(".word 0xbb8"); //3000	
+    //asm(".word 0xbb8"); //3000	
     //asm (".word 0xea60"); //60000 (10ms)
 }
 
-int symbols(char c)
-{
-	uint32_t out = 0;
-	switch(c)
-		{
-			case 'a': out = 0x77; break;
-			case 'b': out = 0x7c; break;
-			case 'c': out = 0x39; break;
-			case 'd': out = 0x5e; break;
-			case 'e': out = 0x79; break;
-			case 'f': out = 0x71; break;
-			case 'g': out = 0x7d; break;
-			case 'h': out = 0x76; break;
-			case 'i': out = 0x6; break;
-			case 'j': out = 0xe; break;
-			case 'l': out = 0x38; break;
-			case 'n': out = 0x54; break;
+#define bits(PIN_7, PIN_6, PIN_5, PIN_4, PIN_3, PIN_2, PIN_1, PIN_0) \
+	((PIN_7) * (LL_GPIO_PIN_7) | \
+	 (PIN_6) * (LL_GPIO_PIN_6) | \
+	 (PIN_5) * (LL_GPIO_PIN_5) | \
+	 (PIN_4) * (LL_GPIO_PIN_4) | \
+	 (PIN_3) * (LL_GPIO_PIN_3) | \
+	 (PIN_2) * (LL_GPIO_PIN_2) | \
+	 (PIN_1) * (LL_GPIO_PIN_1) | \
+	 (PIN_0) * (LL_GPIO_PIN_0)   \
+	)
+
+#define main_bits(PIN_3, PIN_2, PIN_1, PIN_0) \
+	((PIN_3) * (LL_GPIO_PIN_3) | \
+	 (PIN_2) * (LL_GPIO_PIN_2) | \
+	 (PIN_1) * (LL_GPIO_PIN_1) | \
+	 (PIN_0) * (LL_GPIO_PIN_0)   \
+	)
+			/*
+			case 'a': out = bits(0x77); break;
+			case 'b': out = bits(0x7c); break;
+			case 'c': out = bits(0x39); break;
+			case 'd': out = bits(0x5e); break;
+			case 'e': out = bits(0x79); break;
+			case 'f': out = bits(0x71); break;
+			case 'g': out = bits(0x7d); break;
+			case 'h': out = bits(0x76); break;
+			case 'i': out = bits(0x6); break;
+			case 'j': out = bits(0xe); break;
+			case 'l': out = bits(0x38); break;
+			case 'n': out = bits(0x54); break;	
 			case 'o': out = 0x3f; break;
 			case 'p': out = 0x73; break;
 			case 's': out = 0x6d; break;
@@ -100,42 +150,158 @@ int symbols(char c)
 			case '_': out = 0x8; break;
 			case '-': out = 0x40; break;
 			default: out = 0x0; break;
-
+			*/
+/*
+ * this function translates symbol for 7_segment indicator
+ */
+int symbols(char c)
+{
+	uint32_t out = 0;
+	switch(c)
+		{
+			case 'a': out = bits(0,1,1,1,0,1,1,1); break;								
+			case 'b': out = bits(0,1,1,1,1,1,0,0); break;
+			case 'c': out = bits(0,0,1,1,1,0,0,1); break;
+			case 'd': out = bits(0,1,0,1,1,1,1,0); break;
+			case 'e': out = bits(0,1,1,1,1,0,0,1); break;
+			case 'f': out = bits(0,1,1,1,0,0,0,1); break;
+			case 'g': out = bits(0,1,1,1,1,1,0,1); break;
+			case 'h': out = bits(0,1,1,1,0,1,1,0); break;
+			case 'i': out = bits(0,0,0,0,0,1,1,0); break;
+			case 'j': out = bits(0,0,0,0,1,1,1,0); break;
+			case 'l': out = bits(0,0,1,1,1,0,0,0); break;
+			case 'n': out = bits(0,1,0,1,0,1,0,0); break;
+			case 'o': out = bits(0,0,1,1,1,1,1,1); break;
+			case 'p': out = bits(0,1,1,1,0,0,1,1); break;
+			case 's': out = bits(0,1,1,0,1,1,0,1); break;
+			case 'u': out = bits(0,0,1,1,1,1,1,0); break;
+			case 'z': out = bits(0,1,0,1,1,0,1,1); break;
+			case 'q': out = bits(0,1,1,0,0,1,1,1); break;
+			case 'r': out = bits(0,1,0,1,0,0,0,0); break;
+			case 't': out = bits(0,1,1,1,1,0,0,0); break;
+			case 'y': out = bits(0,1,1,0,1,1,1,0); break;
+			case ',':
+			case '.': out = bits(1,0,0,0,0,0,0,0); break;
+			case '!': out = bits(1,0,0,0,0,1,1,0); break;
+			case '?': out = bits(1,0,1,0,0,1,1,1); break;
+			case '_': out = bits(0,0,0,0,1,0,0,0); break;
+			case '-': out = bits(0,1,0,0,0,0,0,0); break;
+			default: out = bits(0,0,0,0,0,0,0,0); break;
 		}
 		return out;
 }
 
-//this function is for displaying dynamic text (> 4 symbols)
+/*
+ * this function is just for one indicator 
+ */
+static void set_indicator(uint8_t number)
+{
+    /*
+     * Put all pins for indicator together (for segments only)
+     */
+    static uint32_t mask = bits(1,1,1,1,1,1,1,1);
+    /*
+     * For simplicity there are only decoded values for the first 4 numbers
+     */
+    static const uint32_t decoder[] = 
+    {
+    	bits(0,0,1,1,1,1,1,1), //0 
+    	bits(0,0,0,0,0,1,1,0), //1
+    	bits(0,1,0,1,1,0,1,1), //2
+    	bits(0,1,0,0,1,1,1,1), //3
+    	bits(0,1,1,0,0,1,1,0), //4
+    	bits(0,1,1,0,1,1,0,1), //5
+    	bits(0,1,1,1,1,1,0,1), //6
+    	bits(0,0,0,0,0,1,1,1), //7
+    	bits(0,1,1,1,1,1,1,1), //8
+    	bits(0,1,1,0,1,1,1,1)  //9
+    };
+    const uint8_t max_num = sizeof(decoder) / sizeof(uint32_t);
+    uint32_t port_state = 0;
+
+	/*
+	 * Read current state and do not change pins that are not related to
+     * indicator (that is done by using masking)
+     */
+    port_state = LL_GPIO_ReadOutputPort(GPIOB);
+    /*
+     * Example:
+     * 01100101 <= Input
+     * mask = 111 (pins allowed to be changed)
+     * ~mask = 11111000 (inverted mask sets remaing bits to one)
+     * result = result & ~mask (zero only first three bits)
+     * result = result | 001 (modify first three bits)
+     * result -> 01100001
+     */
+    port_state = (port_state & ~mask) | decoder[number % max_num];
+    LL_GPIO_WriteOutputPort(GPIOB, port_state);
+    return;
+}
+
+
+
+void indicator_on(uint32_t num)
+{
+	if(num == 0) LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,0));
+	if(num == 1) LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,0,1));
+	if(num == 2) LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,0,1,1));
+	if(num == 3) LL_GPIO_WriteOutputPort(GPIOC, main_bits(0,1,1,1));
+	return;
+}
+
+
+/*
+ * it's just to turn on particular indicator(num <=  4)
+ */
+/*
+uint32_t mask_indicator(uint32_t mask)
+{
+	//return main_bits((mask & 0b1000) >> 3, (mask & 0b0100) >> 2, (mask & 0b10) >> 1, mask & 0b1);
+	
+	return main_bits((mask & (1<<3)) >> 3, (mask & (1<<2)) >> 2, (mask & (1<<1)) >> 1, mask & 1);
+}
+*/
+
+uint32_t mask_indicator(uint32_t mask)
+{
+	return bits((mask & (1<<7)) >> 7, (mask & (1<<6)) >> 6, (mask & (1<<5)) >> 5, (mask & (1<<4)) >> 4, \
+				(mask & (1<<3)) >> 3, (mask & (1<<2)) >> 2, (mask & (1<<1)) >> 1, mask & 1);
+}
+
+/*
+ * this function is for displaying dynamic text (> 4 symbols)
+ */
 void dynamic_text(char line[])
 {
 	char c = line[0];
 	uint32_t i = 0, last_cnt = 0;
 	
-	i = 0, last_cnt = 0;
-	c = line[0];
-
 	while(c != '\0')
 	{			
 		//this cycle to slow down the text
-		for(int cnt = 0; cnt < 300; cnt++)
+		for(int cnt = 0; cnt < 50; cnt++)
 		{		
 			//this cycle to scroll all text
-			for(uint32_t k = i, j = 0; (k >= 0) && (j < 4); k--, j++)
+			for(uint32_t num = i, next = 0; (num >= 0) && (next < 4); num--, next++)
 			{	
-				c = line[k];
+				c = line[num];
+	
+				//update indicator and show text
+				LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
+				
+				//indicator_on(next);
+				LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1<<next));
+				//LL_GPIO_WriteOutputPort(GPIOC, ~(1<<j));
 
-			//update indicator and show text
-			LL_GPIO_WriteOutputPort(GPIOC, 0b1111);
-			LL_GPIO_WriteOutputPort(GPIOC, ~(1<<j));
-			LL_GPIO_WriteOutputPort(GPIOB, symbols(c));
-			delay();
+				LL_GPIO_WriteOutputPort(GPIOB, symbols(c));
+			
+				delay();
 			}
-
 		}
 		
 		c = line[i++];
 		
-		//it's necessary to make the text reach the end of the indicator
+		//it is necessary for the text to reach the end of the indicator
 		if(c == '\0' || last_cnt != 0 )
 		{		
 			if(last_cnt < 2) 
@@ -145,83 +311,127 @@ void dynamic_text(char line[])
 			}
 			else c = '\0'; 
 		}
-		
-		
 	}
-	
 	return;
 }
 
-
+//TODO!!!
 //this function is for displaying static text (just < 4 symbols)
 void text(char line[])
 {
 	char c = line[0];
-	uint32_t i = 0, out = 0x0, k = 3;
+	uint32_t i = 0, out = 0x0, shift = 3;
 	
+	//TODO: block jump
 	while(c != '\0')
 	{
 		c = line[i++];
 		
 		out = symbols(c);
 
-		LL_GPIO_WriteOutputPort(GPIOC, 0b1111);
-		LL_GPIO_WriteOutputPort(GPIOC, ~(1<<k));
-		k--;
+		LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
+
+		//LL_GPIO_WriteOutputPort(GPIOC, ~(1<<shift));
+		indicator_on(shift--);
+
 		LL_GPIO_WriteOutputPort(GPIOB, out);
+
 		delay();
 	}
 	
 	return;
 }
-
-//this function is for displaying number (0-ffff) 
-void dyn_display(uint32_t number)
+/*
+ * this function is for displaying number in decimal (0-9999)
+ */
+void dec_display(uint16_t number)
 {
-	
-	uint32_t out = 0;
 	static uint16_t digit_num = 0;
+	uint16_t out = 0;
 
-	const uint32_t decoder[] = {0x3f, 0x6, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x7, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71};
+	const uint16_t decoder[] = {bits(0,0,1,1,1,1,1,1), //0
+								bits(0,0,0,0,0,1,1,0), //1
+								bits(0,1,0,1,1,0,1,1), //2
+								bits(0,1,0,0,1,1,1,1), //3
+								bits(0,1,1,0,0,1,1,0), //4
+								bits(0,1,1,0,1,1,0,1), //5
+								bits(0,1,1,1,1,1,0,1), //6
+								bits(0,0,0,0,0,1,1,1), //7
+								bits(0,1,1,1,1,1,1,1), //8
+								bits(0,1,1,0,1,1,1,1), //9
+								bits(0,1,1,1,0,1,1,1), //a
+								bits(0,1,1,1,1,1,0,0), //b
+								bits(0,0,1,1,1,0,0,1), //c
+								bits(0,1,0,1,1,1,1,0), //d
+								bits(0,1,1,1,1,0,0,1), //e
+								bits(0,1,1,1,0,0,0,1)}; //f
 
-	LL_GPIO_WriteOutputPort(GPIOC, 0b1111);
+	LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
 
-	switch(digit_num)
+	if(digit_num == 0) 
 	{
-		case 0: 
-		{
-			LL_GPIO_WriteOutputPort(GPIOC, ~LL_GPIO_PIN_0);
-			out = decoder[number & 0x000f]; 
-			break;
-		}
-		case 1:
-		{
-			LL_GPIO_WriteOutputPort(GPIOC, ~LL_GPIO_PIN_1);
-			out = decoder[(number & 0x00f0)>>4];
-			break;
-
-		} 
-		case 2:
-		{
-			LL_GPIO_WriteOutputPort(GPIOC, ~LL_GPIO_PIN_2);
-			out = decoder[(number & 0x0f00) >> 8];
-			break;
-		} 
-		case 3:
-		{
-			LL_GPIO_WriteOutputPort(GPIOC, ~LL_GPIO_PIN_3);
-			out = decoder[(number & 0xf000) >> 12]; 
-			break;
-		} 
-		default: break;
+		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_0);
+		out = decoder[number % 10];
+	}
+	if(digit_num == 1) 
+	{
+		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_1);
+		out = decoder[(number / 10) % 10];
+	}
+	if(digit_num == 2)
+	{
+		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_2);
+		out = decoder[(number / 100) % 10];
+	}
+	if(digit_num == 3)
+	{
+		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_3);
+		out = decoder[(number / 1000) % 10];
 	}
 
 	LL_GPIO_WriteOutputPort(GPIOB, out);
+	
+	digit_num = (digit_num + 1) % 4;
+
+	return;
+} 
+
+void dyn_display(uint32_t number)
+{
+	uint32_t out = 0;
+	static uint16_t digit_num = 0;
+
+	const uint32_t decoder[] = {bits(0,0,1,1,1,1,1,1), //0
+								bits(0,0,0,0,0,1,1,0), //1
+								bits(0,1,0,1,1,0,1,1), //2
+								bits(0,1,0,0,1,1,1,1), //3
+								bits(0,1,1,0,0,1,1,0), //4
+								bits(0,1,1,0,1,1,0,1), //5
+								bits(0,1,1,1,1,1,0,1), //6
+								bits(0,0,0,0,0,1,1,1), //7
+								bits(0,1,1,1,1,1,1,1), //8
+								bits(0,1,1,0,1,1,1,1), //9
+								bits(0,1,1,1,0,1,1,1), //a
+								bits(0,1,1,1,1,1,0,0), //b
+								bits(0,0,1,1,1,0,0,1), //c
+								bits(0,1,0,1,1,1,1,0), //d
+								bits(0,1,1,1,1,0,0,1), //e
+								bits(0,1,1,1,0,0,0,1)}; //f
+
+	//LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
+
+	LL_GPIO_WriteOutputPort(GPIOC, mask_new(0b1111));
+	
+	LL_GPIO_ResetOutputPin(GPIOC, mask_new(1 << digit_num));
+
+	out = decoder[(number & (0x000f << 4*digit_num)) >> 4*digit_num];
+
+	LL_GPIO_WriteOutputPort(GPIOB, mask_new(out));
+
 	digit_num = (digit_num + 1) % 4;
 
 	return;
 }
-
 
 int main(void)
 {
@@ -233,13 +443,23 @@ int main(void)
 		
 		for(int i = 0; i < 3000; i++)
 		{
-			dyn_display(0x2021);
+			dyn_display(0x9af2);
 			delay();
 		}
 		
+		/*for(int i = 0; i < 3000; i++)
+		{
+			dec_display(9993);
+			//set_indicator(0xf);
+			delay();
+		}
+		*/
+		dynamic_text("abcdefghi");
 
-		dynamic_text("phystech_labs and...");
+		
+		//dynamic_text("phystech_labs and...");
 		//text("abcd");
+		/*
 		text(" ");
 		
 		dynamic_text("biba_boba");
@@ -252,9 +472,9 @@ int main(void)
 		
 		for(int i = 0; i < 1000; i++)
 			text("cool");
-
+		*/
 	}
-
+		
     return 0;
 }
 
