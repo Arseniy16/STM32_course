@@ -114,14 +114,7 @@ __attribute__((naked)) void delay(void)
 	 (PIN_1) * (LL_GPIO_PIN_1) | \
 	 (PIN_0) * (LL_GPIO_PIN_0)   \
 	)
-
-#define main_bits(PIN_3, PIN_2, PIN_1, PIN_0) \
-	((PIN_3) * (LL_GPIO_PIN_3) | \
-	 (PIN_2) * (LL_GPIO_PIN_2) | \
-	 (PIN_1) * (LL_GPIO_PIN_1) | \
-	 (PIN_0) * (LL_GPIO_PIN_0)   \
-	)
-			/*
+		/*
 			case 'a': out = bits(0x77); break;
 			case 'b': out = bits(0x7c); break;
 			case 'c': out = bits(0x39); break;
@@ -158,37 +151,37 @@ int symbols(char c)
 {
 	uint32_t out = 0;
 	switch(c)
-		{
-			case 'a': out = bits(0,1,1,1,0,1,1,1); break;								
-			case 'b': out = bits(0,1,1,1,1,1,0,0); break;
-			case 'c': out = bits(0,0,1,1,1,0,0,1); break;
-			case 'd': out = bits(0,1,0,1,1,1,1,0); break;
-			case 'e': out = bits(0,1,1,1,1,0,0,1); break;
-			case 'f': out = bits(0,1,1,1,0,0,0,1); break;
-			case 'g': out = bits(0,1,1,1,1,1,0,1); break;
-			case 'h': out = bits(0,1,1,1,0,1,1,0); break;
-			case 'i': out = bits(0,0,0,0,0,1,1,0); break;
-			case 'j': out = bits(0,0,0,0,1,1,1,0); break;
-			case 'l': out = bits(0,0,1,1,1,0,0,0); break;
-			case 'n': out = bits(0,1,0,1,0,1,0,0); break;
-			case 'o': out = bits(0,0,1,1,1,1,1,1); break;
-			case 'p': out = bits(0,1,1,1,0,0,1,1); break;
-			case 's': out = bits(0,1,1,0,1,1,0,1); break;
-			case 'u': out = bits(0,0,1,1,1,1,1,0); break;
-			case 'z': out = bits(0,1,0,1,1,0,1,1); break;
-			case 'q': out = bits(0,1,1,0,0,1,1,1); break;
-			case 'r': out = bits(0,1,0,1,0,0,0,0); break;
-			case 't': out = bits(0,1,1,1,1,0,0,0); break;
-			case 'y': out = bits(0,1,1,0,1,1,1,0); break;
-			case ',':
-			case '.': out = bits(1,0,0,0,0,0,0,0); break;
-			case '!': out = bits(1,0,0,0,0,1,1,0); break;
-			case '?': out = bits(1,0,1,0,0,1,1,1); break;
-			case '_': out = bits(0,0,0,0,1,0,0,0); break;
-			case '-': out = bits(0,1,0,0,0,0,0,0); break;
-			default: out = bits(0,0,0,0,0,0,0,0); break;
-		}
-		return out;
+	{
+		case 'a': out = bits(0,1,1,1,0,1,1,1); break;								
+		case 'b': out = bits(0,1,1,1,1,1,0,0); break;
+		case 'c': out = bits(0,0,1,1,1,0,0,1); break;
+		case 'd': out = bits(0,1,0,1,1,1,1,0); break;
+		case 'e': out = bits(0,1,1,1,1,0,0,1); break;
+		case 'f': out = bits(0,1,1,1,0,0,0,1); break;
+		case 'g': out = bits(0,1,1,1,1,1,0,1); break;
+		case 'h': out = bits(0,1,1,1,0,1,1,0); break;
+		case 'i': out = bits(0,0,0,0,0,1,1,0); break;
+		case 'j': out = bits(0,0,0,0,1,1,1,0); break;
+		case 'l': out = bits(0,0,1,1,1,0,0,0); break;
+		case 'n': out = bits(0,1,0,1,0,1,0,0); break;
+		case 'o': out = bits(0,0,1,1,1,1,1,1); break;
+		case 'p': out = bits(0,1,1,1,0,0,1,1); break;
+		case 's': out = bits(0,1,1,0,1,1,0,1); break;
+		case 'u': out = bits(0,0,1,1,1,1,1,0); break;
+		case 'z': out = bits(0,1,0,1,1,0,1,1); break;
+		case 'q': out = bits(0,1,1,0,0,1,1,1); break;
+		case 'r': out = bits(0,1,0,1,0,0,0,0); break;
+		case 't': out = bits(0,1,1,1,1,0,0,0); break;
+		case 'y': out = bits(0,1,1,0,1,1,1,0); break;
+		case ',':
+		case '.': out = bits(1,0,0,0,0,0,0,0); break;
+		case '!': out = bits(1,0,0,0,0,1,1,0); break;
+		case '?': out = bits(1,0,1,0,0,1,1,1); break;
+		case '_': out = bits(0,0,0,0,1,0,0,0); break;
+		case '-': out = bits(0,1,0,0,0,0,0,0); break;
+		default: out = bits(0,0,0,0,0,0,0,0); break;
+	}
+	return out;
 }
 
 /*
@@ -238,31 +231,9 @@ static void set_indicator(uint8_t number)
     LL_GPIO_WriteOutputPort(GPIOB, port_state);
     return;
 }
-
-
-
-void indicator_on(uint32_t num)
-{
-	if(num == 0) LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,0));
-	if(num == 1) LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,0,1));
-	if(num == 2) LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,0,1,1));
-	if(num == 3) LL_GPIO_WriteOutputPort(GPIOC, main_bits(0,1,1,1));
-	return;
-}
-
-
 /*
- * it's just to turn on particular indicator(num <=  4)
+ * it's a special mask to turn on paticular leds on indicator
  */
-/*
-uint32_t mask_indicator(uint32_t mask)
-{
-	//return main_bits((mask & 0b1000) >> 3, (mask & 0b0100) >> 2, (mask & 0b10) >> 1, mask & 0b1);
-	
-	return main_bits((mask & (1<<3)) >> 3, (mask & (1<<2)) >> 2, (mask & (1<<1)) >> 1, mask & 1);
-}
-*/
-
 uint32_t mask_indicator(uint32_t mask)
 {
 	return bits((mask & (1<<7)) >> 7, (mask & (1<<6)) >> 6, (mask & (1<<5)) >> 5, (mask & (1<<4)) >> 4, \
@@ -288,11 +259,9 @@ void dynamic_text(char line[])
 				c = line[num];
 	
 				//update indicator and show text
-				LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
+				LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
 				
-				//indicator_on(next);
 				LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1<<next));
-				//LL_GPIO_WriteOutputPort(GPIOC, ~(1<<j));
 
 				LL_GPIO_WriteOutputPort(GPIOB, symbols(c));
 			
@@ -302,7 +271,7 @@ void dynamic_text(char line[])
 		
 		c = line[i++];
 		
-		//it is necessary for the text to reach the end of the indicator
+		//it's necessary for the text to reach the end of the indicator
 		if(c == '\0' || last_cnt != 0 )
 		{		
 			if(last_cnt < 2) 
@@ -315,25 +284,23 @@ void dynamic_text(char line[])
 	}
 	return;
 }
-
-//TODO!!!
-//this function is for displaying static text (just < 4 symbols)
+/*
+ *this function is for displaying static text (just < 4 symbols)
+ */
 void text(char line[])
 {
 	char c = line[0];
 	uint32_t i = 0, out = 0x0, shift = 3;
 	
-	//TODO: block jump
 	while(c != '\0')
 	{
 		c = line[i++];
 		
 		out = symbols(c);
 
-		LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
+		LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
 
-		//LL_GPIO_WriteOutputPort(GPIOC, ~(1<<shift));
-		indicator_on(shift--);
+		LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << shift--));
 
 		LL_GPIO_WriteOutputPort(GPIOB, out);
 
@@ -366,31 +333,18 @@ void dec_display(uint16_t number)
 								bits(0,1,0,1,1,1,1,0), //d
 								bits(0,1,1,1,1,0,0,1), //e
 								bits(0,1,1,1,0,0,0,1)}; //f
+	//update indicator
+	LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
 
-	LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
-
-	if(digit_num == 0) 
-	{
-		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_0);
-		out = decoder[number % 10];
-	}
-	if(digit_num == 1) 
-	{
-		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_1);
-		out = decoder[(number / 10) % 10];
-	}
-	if(digit_num == 2)
-	{
-		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_2);
-		out = decoder[(number / 100) % 10];
-	}
-	if(digit_num == 3)
-	{
-		LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_3);
-		out = decoder[(number / 1000) % 10];
-	}
-
-	LL_GPIO_WriteOutputPort(GPIOB, out);
+	//turn on a particular indicator
+	LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << digit_num));
+	
+	if(digit_num == 0) out = decoder[(number % 10)];
+	if(digit_num == 1) out = decoder[(number / 10) % 10];
+	if(digit_num == 2) out = decoder[(number / 100) % 10];
+	if(digit_num == 3) out = decoder[(number / 1000) % 10];
+	
+	LL_GPIO_WriteOutputPort(GPIOB, mask_indicator(out));
 	
 	digit_num = (digit_num + 1) % 4;
 
@@ -441,30 +395,24 @@ int main(void)
 
 	while(1)
 	{
-		
-		for(int i = 0; i < 3000; i++)
+
+		for(int i = 0; i < 1000; i++)
 		{
-			dyn_display(0x9af2);
+			//dec_display(9993);
+			set_indicator(0xf);
 			delay();
 		}
 		
-		/*for(int i = 0; i < 3000; i++)
-		{
-			dec_display(9993);
-			//set_indicator(0xf);
-			delay();
-		}
-		*/
-		dynamic_text("abcdefghi");
+		//dynamic_text("abcdefghi");
 
 		
-		//dynamic_text("phystech_labs and...");
+		dynamic_text("phystech_labs and...");
 		//text("abcd");
-		/*
+		
 		text(" ");
 		
 		dynamic_text("biba_boba");
-		
+		/*
 		for(int i = 0; i < 0xffff; i++)
 		{
 			dyn_display(i);
