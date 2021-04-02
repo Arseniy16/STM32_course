@@ -1,4 +1,3 @@
-ASDIASDASDAasdasdASDASDASDAS
 /*
  * This project is for using 7_segment indicator.
  */
@@ -217,6 +216,7 @@ static void set_indicator(uint8_t number)
     	bits(0,1,1,1,1,1,1,1), //8
     	bits(0,1,1,0,1,1,1,1)  //9
     };
+
     const uint8_t max_num = sizeof(decoder) / sizeof(uint32_t);
     uint32_t port_state = 0;
 
@@ -421,13 +421,13 @@ void dyn_display(uint32_t number)
 
 	//LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
 
-	LL_GPIO_WriteOutputPort(GPIOC, mask_new(0b1111));
+	LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
 	
-	LL_GPIO_ResetOutputPin(GPIOC, mask_new(1 << digit_num));
+	LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << digit_num));
 
 	out = decoder[(number & (0x000f << 4*digit_num)) >> 4*digit_num];
 
-	LL_GPIO_WriteOutputPort(GPIOB, mask_new(out));
+	LL_GPIO_WriteOutputPort(GPIOB, mask_indicator(out));
 
 	digit_num = (digit_num + 1) % 4;
 
