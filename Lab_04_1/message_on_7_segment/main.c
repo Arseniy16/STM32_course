@@ -370,13 +370,10 @@ int main(void)
 		dynamic_text("biba_boba");
 		
 		for(int i = 0; i < 9999; i++)
-		{
 			dec_display(i);
-		}
 		
 		text("cool"); 
 	}
 		
 	return 0;
 }
-
