@@ -373,12 +373,11 @@ int main(void)
 		text(" ");
 		dynamic_text("biba_boba");
 		
-		for(uint32_t i = 0; i < 9999; i++)
+		for(int i = 0; i < 9999; i++)
 			dec_display(i);
 		
-		text("cool");
+		text("cool"); 
 	}
 		
 	return 0;
 }
-
