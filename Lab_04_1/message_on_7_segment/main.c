@@ -374,7 +374,7 @@ int main(void)
 			dec_display(i);
 		}
 		
-		text("cool");
+		text("cool"); 
 	}
 		
 	return 0;
