@@ -271,7 +271,8 @@ void dec_display(uint16_t number)
 	static uint16_t digit_num = 0;
 	uint16_t out = 0;
 
-	const uint16_t decoder[] = {bits(0,0,1,1,1,1,1,1), //0
+	const uint16_t decoder[] = {
+								bits(0,0,1,1,1,1,1,1), //0
 								bits(0,0,0,0,0,1,1,0), //1
 								bits(0,1,0,1,1,0,1,1), //2
 								bits(0,1,0,0,1,1,1,1), //3
@@ -286,7 +287,8 @@ void dec_display(uint16_t number)
 								bits(0,0,1,1,1,0,0,1), //c
 								bits(0,1,0,1,1,1,1,0), //d
 								bits(0,1,1,1,1,0,0,1), //e
-								bits(0,1,1,1,0,0,0,1)}; //f
+								bits(0,1,1,1,0,0,0,1)  //f
+							}; 
 
 	//during this DEC_TIME you can show a value   
 	for(uint32_t i = 0 ; i < DEC_TIME / DELAY; i++)
@@ -318,7 +320,8 @@ void dyn_display(uint32_t number)
 	uint32_t out = 0;
 	static uint16_t digit_num = 0;
 
-	const uint32_t decoder[] = {bits(0,0,1,1,1,1,1,1), //0
+	const uint32_t decoder[] = {
+								bits(0,0,1,1,1,1,1,1), //0
 								bits(0,0,0,0,0,1,1,0), //1
 								bits(0,1,0,1,1,0,1,1), //2
 								bits(0,1,0,0,1,1,1,1), //3
@@ -333,7 +336,8 @@ void dyn_display(uint32_t number)
 								bits(0,0,1,1,1,0,0,1), //c
 								bits(0,1,0,1,1,1,1,0), //d
 								bits(0,1,1,1,1,0,0,1), //e
-								bits(0,1,1,1,0,0,0,1)}; //f
+								bits(0,1,1,1,0,0,0,1)  //f
+							};
 
 	//during this DYN_TIME you can show a value   
 	for(uint32_t i = 0 ; i < DYN_TIME / DELAY; i++)
@@ -369,10 +373,8 @@ int main(void)
 		text(" ");
 		dynamic_text("biba_boba");
 		
-		for(int i = 0; i < 9999; i++)
-		{
+		for(uint32_t i = 0; i < 9999; i++)
 			dec_display(i);
-		}
 		
 		text("cool");
 	}
