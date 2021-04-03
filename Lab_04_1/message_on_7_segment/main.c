@@ -19,6 +19,29 @@
 	 (PIN_1) * (LL_GPIO_PIN_1) | \
 	 (PIN_0) * (LL_GPIO_PIN_0)   )
 
+/*
+ * During TEXT_TIME you can show a text 
+ * It uses in text()
+ */ 
+#define TEXT_TIME 1000 //in ms
+/*
+ * During DEC_TIME and DYN_TIME you can show a value 
+ * It uses in dec_display() and in dyn_display()
+ */ 
+#define	DEC_TIME 5 //in ms
+
+#define	DYN_TIME 1000 //in ms
+/*
+ * It uses in delay() and for calculate count in cycles 
+ * If you change delay() you must change DELAY!!!
+ */
+#define	DELAY 2 //in ms
+/*
+ * The higher DYNAMIC_COEF, the slower the text moves
+ * It uses in dynamic_text()	
+ */
+#define	DYNAMIC_COEF 50 //normal value
+
 /**
   * System Clock Configuration
   * The system Clock is configured as follow :
@@ -101,7 +124,7 @@ static void gpio_config(void)
     return;
 }
 /*
- * Just set of commands to waste CPU power for 2ms
+ * Just set of commands to waste CPU power for DELAY __2ms__ 
  */
 __attribute__((naked)) void delay(void)
 {
@@ -119,7 +142,7 @@ __attribute__((naked)) void delay(void)
 /*
  * this function translates symbol for 7_segment indicator
  */
-int symbols(char c)
+uint32_t symbols(char c)
 {
 	uint32_t out = 0;
 	switch(c)
@@ -173,19 +196,24 @@ void dynamic_text(char line[])
 	
 	while(c != '\0')
 	{			
-		//this cycle to slow down the text
-		for(int cnt = 0; cnt < 50; cnt++)
+		/*
+		 * This cycle to slow down the text
+		 * The higher DYNAMIC_COEF, the slower the text moves
+		 */
+		for(int cnt = 0; cnt < DYNAMIC_COEF; cnt++) 
 		{		
 			//this cycle to scroll all text
 			for(uint32_t num = i, next = 0; (num >= 0) && (next < 4); num--, next++)
 			{	
 				c = line[num];
 	
-				//update indicator and show text
+				//update indicator every cycle
 				LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
 				
+				//bit shift for 7-segment indicator
 				LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1<<next));
 
+				//turn on an indicator 
 				LL_GPIO_WriteOutputPort(GPIOB, symbols(c));
 			
 				delay();
@@ -212,34 +240,37 @@ void dynamic_text(char line[])
  */
 void text(char line[])
 {
-	char c = line[0];
-	uint32_t i = 0, out = 0, shift = 0;
+	uint32_t out = 0;
 	
 	//during this TEXT_TIME you can show a text
-	for(uint32_t cycle = 0; cycle < TEXT_TIME / 2 ; cycle++) //TEXT_TIME in ms and it / 2, because delay() for 2ms
+	for(uint32_t cycle = 0; cycle < TEXT_TIME / (5 * DELAY) ; cycle++) 
 	{
-		shift = 3;
-		while(c != '\0')
+		char c = line[0];
+
+		for(uint8_t shift = 3, i = 0; shift >= 0 && (c != '\0'); shift--, i++)
 		{
-			c = line[i++];
+			c = line[i];
 			
 			out = symbols(c);
 
 			//update indicator every cycle
 			LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
-			//bit shift for indicator
-			LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << shift--));
 
+			//bit shift for 7-segment indicator
+			LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << shift));
+
+			//turn on an indicator 
 			LL_GPIO_WriteOutputPort(GPIOB, out);
 
 			delay();
 		}
+
 		delay();
 	}
 	return;
 }
 /*
- * this function is for displaying number in decimal (0-9999)
+ * This function is for displaying number in decimal (0-9999)
  */
 void dec_display(uint16_t number)
 {
@@ -262,24 +293,32 @@ void dec_display(uint16_t number)
 								bits(0,1,0,1,1,1,1,0), //d
 								bits(0,1,1,1,1,0,0,1), //e
 								bits(0,1,1,1,0,0,0,1)}; //f
-	//update indicator
-	LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
 
-	//turn on a particular indicator
-	LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << digit_num));
-	
-	if(digit_num == 0) out = decoder[(number % 10)];
-	if(digit_num == 1) out = decoder[(number / 10) % 10];
-	if(digit_num == 2) out = decoder[(number / 100) % 10];
-	if(digit_num == 3) out = decoder[(number / 1000) % 10];
-	
-	LL_GPIO_WriteOutputPort(GPIOB, mask_indicator(out));
-	
-	digit_num = (digit_num + 1) % 4;
+	//during this DEC_TIME you can show a value   
+	for(uint32_t i = 0 ; i < DEC_TIME / DELAY; i++)
+	{
+		//update indicator
+		LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
 
+		//turn on a particular indicator
+		LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << digit_num));
+
+		if(digit_num == 0) out = decoder[(number % 10)];
+		if(digit_num == 1) out = decoder[(number / 10) % 10];
+		if(digit_num == 2) out = decoder[(number / 100) % 10];
+		if(digit_num == 3) out = decoder[(number / 1000) % 10];
+
+		LL_GPIO_WriteOutputPort(GPIOB, mask_indicator(out));
+
+		digit_num = (digit_num + 1) % 4;
+
+		delay();
+	}
 	return;
 } 
-
+/*
+ * This function is for displaying number in heximal (0-ffff)
+ */
 void dyn_display(uint32_t number)
 {
 	uint32_t out = 0;
@@ -302,18 +341,24 @@ void dyn_display(uint32_t number)
 								bits(0,1,1,1,1,0,0,1), //e
 								bits(0,1,1,1,0,0,0,1)}; //f
 
-	//LL_GPIO_WriteOutputPort(GPIOC, main_bits(1,1,1,1));
+	//during this DYN_TIME you can show a value   
+	for(uint32_t i = 0 ; i < DYN_TIME / DELAY; i++)
+	{
+		//update indicator
+		LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
+		
+		//bit shift for 7-segment indicator
+		LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << digit_num));
 
-	LL_GPIO_WriteOutputPort(GPIOC, mask_indicator(0b1111));
-	
-	LL_GPIO_ResetOutputPin(GPIOC, mask_indicator(1 << digit_num));
+		//create mask for number
+		out = decoder[(number & (0x000f << 4*digit_num)) >> 4*digit_num];
 
-	out = decoder[(number & (0x000f << 4*digit_num)) >> 4*digit_num];
+		LL_GPIO_WriteOutputPort(GPIOB, mask_indicator(out));
 
-	LL_GPIO_WriteOutputPort(GPIOB, mask_indicator(out));
+		digit_num = (digit_num + 1) % 4;
 
-	digit_num = (digit_num + 1) % 4;
-
+		delay();
+	}
 	return;
 }
 
@@ -324,35 +369,18 @@ int main(void)
 
 	while(1)
 	{
+		dyn_display(0x2021);
 
-		for(int i = 0; i < 1000; i++)
-		{
-			dec_display(2021);
-			delay();
-		}
-		
-		//dynamic_text("abcdefghi");
-
-		
 		dynamic_text("phystech_labs and...");
-		//text("abcd");
-		
 		text(" ");
-		
 		dynamic_text("biba_boba");
 		
 		for(int i = 0; i < 9999; i++)
 		{
 			dec_display(i);
-			delay();
 		}
 		
-		for(int i = 0; i < 1000; i++)
-		{	
-			text("cool");
-			delay();
-	 	}
-		
+		text("cool");
 	}
 		
     return 0;
