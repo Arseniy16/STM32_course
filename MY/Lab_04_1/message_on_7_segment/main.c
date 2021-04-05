@@ -5,7 +5,7 @@
 #include <stm32f0xx_ll_system.h>
 #include <stm32f0xx_ll_bus.h>
 #include <stm32f0xx_ll_gpio.h>
-
+/*---------------------------------------------*/
 /*
  * This is a special bit_mask to turn on segments on an indicator 
  */
@@ -136,12 +136,16 @@ static void gpio_config(void)
 /*
  * Just set of commands to waste CPU power for DELAY __2ms__ 
  */
-__attribute__((naked)) void delay(void)
+__attribute__((naked)) static void delay(void)
 {
-	asm ("push {r7, lr}");
-	asm ("ldr r6, [pc, #8]");
-	asm (".word 0x2ee0"); //12000 (2ms)
-	//asm (".word 0x5b8d80"); //1sec
+    asm ("push {r7, lr}");
+    asm ("ldr r6, [pc, #8]");
+    asm ("sub r6, #1");
+    asm ("cmp r6, #0");
+    asm ("bne delay+0x4");
+    asm ("pop {r7, pc}");
+    asm (".word 0x2ee0"); //12000 (2ms)
+    //asm (".word 0x5b8d80"); //1sec
 	//asm(".word 0xbb8"); //3000 	
 	//asm (".word 0xea60"); //60000 (10ms)
 }

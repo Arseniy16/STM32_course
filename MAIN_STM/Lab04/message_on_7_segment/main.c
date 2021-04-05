@@ -5,7 +5,7 @@
 #include <stm32f0xx_ll_system.h>
 #include <stm32f0xx_ll_bus.h>
 #include <stm32f0xx_ll_gpio.h>
-
+/*---------------------------------------------*/
 /*
  * This is a special bit_mask to turn on segments on an indicator 
  */
@@ -19,11 +19,17 @@
 	 (PIN_1) * (LL_GPIO_PIN_1) | \
 	 (PIN_0) * (LL_GPIO_PIN_0)   )
 
+/////////////////////////////////////////////////
+////////////// DEFINE VARIABLES /////////////////
+/*---------------------------------------------*/
+/////////////////////////////////////////////////
+
 /*
  * During TEXT_TIME you can show a text 
  * It uses in text()
  */ 
 #define TEXT_TIME 1000 //in ms
+
 /*
  * During DEC_TIME and DYN_TIME you can show a value 
  * It uses in dec_display() and in dyn_display()
@@ -31,17 +37,21 @@
 #define	DEC_TIME 5 //in ms
 
 #define	DYN_TIME 1000 //in ms
+
 /*
  * It uses in delay() and for calculate count in cycles 
  * If you change delay() you must change DELAY!!!
  */
 #define	DELAY 2 //in ms
+
 /*
  * The higher DYNAMIC_COEF, the slower the text moves
  * It uses in dynamic_text()	
  */
 #define	DYNAMIC_COEF 50 //normal value
+/////////////////////////////////////////////////
 
+/*---------------------------------------------*/
 /**
   * System Clock Configuration
   * The system Clock is configured as follow :
@@ -81,6 +91,7 @@ static void rcc_config()
 	 * through SystemCoreClockUpdate function) */
 	SystemCoreClock = 48000000;
 }
+/*---------------------------------------------*/
 /*
  * Clock on GPIOC, GPIOB and GPIOA
  * Set pins on leds, button and indicator
@@ -121,20 +132,26 @@ static void gpio_config(void)
 
 	return;
 }
+/*---------------------------------------------*/
 /*
  * Just set of commands to waste CPU power for DELAY __2ms__ 
  */
-__attribute__((naked)) void delay(void)
+__attribute__((naked)) static void delay(void)
 {
-	asm ("push {r7, lr}");
-	asm ("ldr r6, [pc, #8]");
-	asm (".word 0x2ee0"); //12000 (2ms)
-	//asm (".word 0x5b8d80"); //1sec
+    asm ("push {r7, lr}");
+    asm ("ldr r6, [pc, #8]");
+    asm ("sub r6, #1");
+    asm ("cmp r6, #0");
+    asm ("bne delay+0x4");
+    asm ("pop {r7, pc}");
+    asm (".word 0x2ee0"); //12000 (2ms)
+    //asm (".word 0x5b8d80"); //1sec
 	//asm(".word 0xbb8"); //3000 	
 	//asm (".word 0xea60"); //60000 (10ms)
 }
+/*---------------------------------------------*/
 /*
- * this function translates symbol for 7_segment indicator
+ * This function translates symbol for 7_segment indicator
  */
 uint32_t symbols(char c)
 {
@@ -172,6 +189,7 @@ uint32_t symbols(char c)
 	}
 	return out;
 }
+/*---------------------------------------------*/
 /*
  * it's a special mask to turn on paticular leds on indicator
  */
@@ -180,6 +198,7 @@ uint32_t mask_indicator(uint32_t mask)
 	return bits((mask & (1<<7)) >> 7, (mask & (1<<6)) >> 6, (mask & (1<<5)) >> 5, (mask & (1<<4)) >> 4, \
 				(mask & (1<<3)) >> 3, (mask & (1<<2)) >> 2, (mask & (1<<1)) >> 1, mask & 1);
 }
+/*---------------------------------------------*/
 /*
  * this function is for displaying dynamic text (> 4 symbols)
  */
@@ -229,6 +248,7 @@ void dynamic_text(char line[])
 	}
 	return;
 }
+/*---------------------------------------------*/
 /*
  * this function is for displaying static text (just < 4 symbols)
  */
@@ -263,6 +283,7 @@ void text(char line[])
 	}
 	return;
 }
+/*---------------------------------------------*/
 /*
  * This function is for displaying number in decimal (0-9999)
  */
@@ -283,12 +304,6 @@ void dec_display(uint16_t number)
 		bits(0,0,0,0,0,1,1,1), //7
 		bits(0,1,1,1,1,1,1,1), //8
 		bits(0,1,1,0,1,1,1,1), //9
-		bits(0,1,1,1,0,1,1,1), //a
-		bits(0,1,1,1,1,1,0,0), //b
-		bits(0,0,1,1,1,0,0,1), //c
-		bits(0,1,0,1,1,1,1,0), //d
-		bits(0,1,1,1,1,0,0,1), //e
-		bits(0,1,1,1,0,0,0,1)  //f
 	}; 
 
 	//during this DEC_TIME you can show a value   
@@ -313,6 +328,7 @@ void dec_display(uint16_t number)
 	}
 	return;
 } 
+/*---------------------------------------------*/
 /*
  * This function is for displaying number in heximal (0-ffff)
  */
@@ -361,7 +377,7 @@ void dyn_display(uint32_t number)
 	}
 	return;
 }
-
+/*---------------------------------------------*/
 int main(void)
 {
 	rcc_config();
