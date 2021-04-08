@@ -1598,60 +1598,61 @@ Disassembly of section .text:
  8000d04:	f7ff fc46 	bl	8000594 <LL_GPIO_SetPinPull>
  8000d08:	2001      	movs	r0, #1
  8000d0a:	f7ff fc11 	bl	8000530 <LL_APB1_GRP1_EnableClock>
- 8000d0e:	4a1f      	ldr	r2, [pc, #124]	; (8000d8c <timers_config+0xbc>)
- 8000d10:	2380      	movs	r3, #128	; 0x80
- 8000d12:	05db      	lsls	r3, r3, #23
- 8000d14:	0011      	movs	r1, r2
- 8000d16:	0018      	movs	r0, r3
- 8000d18:	f7ff fcc2 	bl	80006a0 <LL_TIM_SetPrescaler>
- 8000d1c:	23f0      	movs	r3, #240	; 0xf0
- 8000d1e:	041a      	lsls	r2, r3, #16
- 8000d20:	2380      	movs	r3, #128	; 0x80
- 8000d22:	05db      	lsls	r3, r3, #23
- 8000d24:	2101      	movs	r1, #1
- 8000d26:	0018      	movs	r0, r3
- 8000d28:	f7ff fd6e 	bl	8000808 <LL_TIM_IC_SetFilter>
- 8000d2c:	2380      	movs	r3, #128	; 0x80
- 8000d2e:	05db      	lsls	r3, r3, #23
- 8000d30:	220a      	movs	r2, #10
- 8000d32:	2101      	movs	r1, #1
- 8000d34:	0018      	movs	r0, r3
- 8000d36:	f7ff fdb3 	bl	80008a0 <LL_TIM_IC_SetPolarity>
- 8000d3a:	2380      	movs	r3, #128	; 0x80
- 8000d3c:	025a      	lsls	r2, r3, #9
+ 8000d0e:	23e0      	movs	r3, #224	; 0xe0
+ 8000d10:	33ff      	adds	r3, #255	; 0xff
+ 8000d12:	001a      	movs	r2, r3
+ 8000d14:	2380      	movs	r3, #128	; 0x80
+ 8000d16:	05db      	lsls	r3, r3, #23
+ 8000d18:	0011      	movs	r1, r2
+ 8000d1a:	0018      	movs	r0, r3
+ 8000d1c:	f7ff fcc0 	bl	80006a0 <LL_TIM_SetPrescaler>
+ 8000d20:	23f0      	movs	r3, #240	; 0xf0
+ 8000d22:	041a      	lsls	r2, r3, #16
+ 8000d24:	2380      	movs	r3, #128	; 0x80
+ 8000d26:	05db      	lsls	r3, r3, #23
+ 8000d28:	2101      	movs	r1, #1
+ 8000d2a:	0018      	movs	r0, r3
+ 8000d2c:	f7ff fd6c 	bl	8000808 <LL_TIM_IC_SetFilter>
+ 8000d30:	2380      	movs	r3, #128	; 0x80
+ 8000d32:	05db      	lsls	r3, r3, #23
+ 8000d34:	220a      	movs	r2, #10
+ 8000d36:	2101      	movs	r1, #1
+ 8000d38:	0018      	movs	r0, r3
+ 8000d3a:	f7ff fdb1 	bl	80008a0 <LL_TIM_IC_SetPolarity>
  8000d3e:	2380      	movs	r3, #128	; 0x80
- 8000d40:	05db      	lsls	r3, r3, #23
- 8000d42:	2101      	movs	r1, #1
- 8000d44:	0018      	movs	r0, r3
- 8000d46:	f7ff fcc7 	bl	80006d8 <LL_TIM_IC_SetActiveInput>
- 8000d4a:	2380      	movs	r3, #128	; 0x80
- 8000d4c:	05db      	lsls	r3, r3, #23
- 8000d4e:	2200      	movs	r2, #0
- 8000d50:	2101      	movs	r1, #1
- 8000d52:	0018      	movs	r0, r3
- 8000d54:	f7ff fd0c 	bl	8000770 <LL_TIM_IC_SetPrescaler>
- 8000d58:	2380      	movs	r3, #128	; 0x80
- 8000d5a:	05db      	lsls	r3, r3, #23
- 8000d5c:	2101      	movs	r1, #1
- 8000d5e:	0018      	movs	r0, r3
- 8000d60:	f7ff fcaa 	bl	80006b8 <LL_TIM_CC_EnableChannel>
- 8000d64:	2380      	movs	r3, #128	; 0x80
- 8000d66:	05db      	lsls	r3, r3, #23
- 8000d68:	0018      	movs	r0, r3
- 8000d6a:	f7ff fde9 	bl	8000940 <LL_TIM_EnableIT_CC1>
- 8000d6e:	2380      	movs	r3, #128	; 0x80
- 8000d70:	05db      	lsls	r3, r3, #23
- 8000d72:	0018      	movs	r0, r3
- 8000d74:	f7ff fc86 	bl	8000684 <LL_TIM_EnableCounter>
- 8000d78:	200f      	movs	r0, #15
- 8000d7a:	f7ff fa7b 	bl	8000274 <NVIC_EnableIRQ>
- 8000d7e:	2100      	movs	r1, #0
- 8000d80:	200f      	movs	r0, #15
- 8000d82:	f7ff fa8d 	bl	80002a0 <NVIC_SetPriority>
- 8000d86:	46c0      	nop			; (mov r8, r8)
- 8000d88:	46bd      	mov	sp, r7
- 8000d8a:	bd80      	pop	{r7, pc}
- 8000d8c:	0000bb7f 	.word	0x0000bb7f
+ 8000d40:	025a      	lsls	r2, r3, #9
+ 8000d42:	2380      	movs	r3, #128	; 0x80
+ 8000d44:	05db      	lsls	r3, r3, #23
+ 8000d46:	2101      	movs	r1, #1
+ 8000d48:	0018      	movs	r0, r3
+ 8000d4a:	f7ff fcc5 	bl	80006d8 <LL_TIM_IC_SetActiveInput>
+ 8000d4e:	2380      	movs	r3, #128	; 0x80
+ 8000d50:	05db      	lsls	r3, r3, #23
+ 8000d52:	2200      	movs	r2, #0
+ 8000d54:	2101      	movs	r1, #1
+ 8000d56:	0018      	movs	r0, r3
+ 8000d58:	f7ff fd0a 	bl	8000770 <LL_TIM_IC_SetPrescaler>
+ 8000d5c:	2380      	movs	r3, #128	; 0x80
+ 8000d5e:	05db      	lsls	r3, r3, #23
+ 8000d60:	2101      	movs	r1, #1
+ 8000d62:	0018      	movs	r0, r3
+ 8000d64:	f7ff fca8 	bl	80006b8 <LL_TIM_CC_EnableChannel>
+ 8000d68:	2380      	movs	r3, #128	; 0x80
+ 8000d6a:	05db      	lsls	r3, r3, #23
+ 8000d6c:	0018      	movs	r0, r3
+ 8000d6e:	f7ff fde7 	bl	8000940 <LL_TIM_EnableIT_CC1>
+ 8000d72:	2380      	movs	r3, #128	; 0x80
+ 8000d74:	05db      	lsls	r3, r3, #23
+ 8000d76:	0018      	movs	r0, r3
+ 8000d78:	f7ff fc84 	bl	8000684 <LL_TIM_EnableCounter>
+ 8000d7c:	200f      	movs	r0, #15
+ 8000d7e:	f7ff fa79 	bl	8000274 <NVIC_EnableIRQ>
+ 8000d82:	2100      	movs	r1, #0
+ 8000d84:	200f      	movs	r0, #15
+ 8000d86:	f7ff fa8b 	bl	80002a0 <NVIC_SetPriority>
+ 8000d8a:	46c0      	nop			; (mov r8, r8)
+ 8000d8c:	46bd      	mov	sp, r7
+ 8000d8e:	bd80      	pop	{r7, pc}
 
 08000d90 <TIM2_IRQHandler>:
  8000d90:	b580      	push	{r7, lr}

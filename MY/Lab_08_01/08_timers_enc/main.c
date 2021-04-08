@@ -1,6 +1,6 @@
 /*
- * This project is Lab07 
- * It measures pressing time a button and shows the result on the 7-segment indicator 
+ * This project is Lab08-01
+ * This program shows the rotation of encoder in degree in 7-segment indicator
  */
 #include "stm32f0xx_ll_rcc.h"
 #include "stm32f0xx_ll_system.h"
@@ -12,7 +12,7 @@
 #include "stm32f0xx_ll_utils.h"
 #include "stm32f0xx_ll_cortex.h"
 
-/*---------------------------------------------*/
+/*--------------------------------------------- */
 /*
  * This is a special bit_mask to turn on segments on an indicator 
  */
@@ -117,9 +117,9 @@ static void gpio_config(void)
 /*
  * This function is for displaying number in decimal (0-9999)
  */
-void dec_display(uint16_t number)
+void dec_display(uint32_t number)
 {
-	static uint16_t digit_num = 0;
+	static uint32_t digit_num = 0;
 	uint16_t out = 0;
 
 	const uint16_t decoder[] = 
@@ -150,87 +150,59 @@ void dec_display(uint16_t number)
 	LL_GPIO_WriteOutputPort(GPIOB, mask_indicator(out));
 
 	digit_num = (digit_num + 1) % 4;
-} 
+}
 /*---------------------------------------------*/
 /*
- * Configure timer to counter mode
+ * Configure timer to encoder mode
  */
 static void timers_config(void)
 {
-	/*
-	 * Configure input channel
-	 */
 	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+	LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_1, LL_GPIO_MODE_ALTERNATE);
 	LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_5, LL_GPIO_MODE_ALTERNATE);
+	LL_GPIO_SetAFPin_0_7(GPIOA, LL_GPIO_PIN_1, LL_GPIO_AF_2);
 	LL_GPIO_SetAFPin_0_7(GPIOA, LL_GPIO_PIN_5, LL_GPIO_AF_2);
+	LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_1, LL_GPIO_PULL_UP);
 	LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_5, LL_GPIO_PULL_UP);
-	/*
-	 * Setup timer to capture input mode
-	 */
-	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
-	LL_TIM_SetPrescaler(TIM2, 479);
-	LL_TIM_IC_SetFilter(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_FILTER_FDIV32_N8); 
-	LL_TIM_IC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1,
-						  LL_TIM_IC_POLARITY_BOTHEDGE);
-	LL_TIM_IC_SetActiveInput(TIM2, LL_TIM_CHANNEL_CH1,
-							 LL_TIM_ACTIVEINPUT_DIRECTTI);
-	LL_TIM_IC_SetPrescaler(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_ICPSC_DIV1);
-	LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
-	LL_TIM_EnableIT_CC1(TIM2);
-	LL_TIM_EnableCounter(TIM2);
-	/*
-	 * Setup NVIC
-	 */ 
-	NVIC_EnableIRQ(TIM2_IRQn);
-	NVIC_SetPriority(TIM2_IRQn, 0);
 
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
+	/* (1) Configure TI1FP1 on TI1 (CC1S = 01)
+		 configure TI1FP2 on TI2 (CC2S = 01) */
+	/* (2) Configure TI1FP1 and TI2FP2 non inverted (CC1P = CC2P = 0, reset value) */
+	/* (3) Configure both inputs are active on both rising and falling edges
+		(SMS = 011) */ 
+	LL_TIM_IC_SetActiveInput(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_ACTIVEINPUT_DIRECTTI); // 1
+	LL_TIM_IC_SetActiveInput(TIM2, LL_TIM_CHANNEL_CH2, LL_TIM_ACTIVEINPUT_DIRECTTI); // 1
+	LL_TIM_IC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_ETR_POLARITY_NONINVERTED);  // 2
+	LL_TIM_IC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH2, LL_TIM_ETR_POLARITY_NONINVERTED);  // 2
+	LL_TIM_SetEncoderMode(TIM2, LL_TIM_ENCODERMODE_X4_TI12); // 3
+	//LL_TIM_IC_SetFilter(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_FILTER_FDIV16_N5);
+	//LL_TIM_IC_SetFilter(TIM2, LL_TIM_CHANNEL_CH2, LL_TIM_IC_FILTER_FDIV16_N5);
+	LL_TIM_SetAutoReload(TIM2, 95); //count contacts on encoder (for 1 rotation of encoder) 
+	LL_TIM_EnableCounter(TIM2);
+	return;
 }
 /*---------------------------------------------*/
-///////////////GLOBAL VARIABLES//////////////////
-/////////////////////////////////////////////////
-static int time = 0;
-static int count = 0;
-static int button_set = 0;
-/////////////////////////////////////////////////
-
-/*
- * Handler for interrupting of button
- */
-void TIM2_IRQHandler(void)
-{
-	LL_GPIO_TogglePin(GPIOC, LL_GPIO_PIN_8);
-
-	//if button is pressed
-	if(!LL_GPIO_IsInputPinSet(GPIOA, LL_GPIO_PIN_5))
-	{
-		button_set = 1;
-		if(count) count = 0;
-	}
-	else button_set = 0;
-
-	LL_TIM_ClearFlag_CC1(TIM2);
-}
 /*
  * Configure system timer to time 1 ms
  */
 static void systick_config(void)
 {
-    LL_InitTick(48000000, 1000);
-    LL_SYSTICK_EnableIT();
-    NVIC_SetPriority(SysTick_IRQn, 1);
-    return;
+	LL_InitTick(48000000, 1000);
+	LL_SYSTICK_EnableIT();
+	NVIC_SetPriority(SysTick_IRQn, 1);
+	return;
 }
 /*
  * Handler for system timer
  */
 void SysTick_Handler(void)
 {
-   	if(button_set) count++;
-    dec_display(count);    
-
-    return;
+	//display encoder rotation in degree (0-360)
+	dec_display((uint32_t)(LL_TIM_GetCounter(TIM2) / 95.0 * 360)); 
+	return;
 }
-
+/*---------------------------------------------*/
 int main(void)
 {
 	rcc_config();
