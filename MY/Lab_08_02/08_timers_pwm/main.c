@@ -59,8 +59,7 @@ static void rcc_config()
 	while (LL_RCC_HSI_IsReady() != 1);
 
 	/* Main PLL configuration and activation */
-	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI_DIV_2,
-				LL_RCC_PLL_MUL_12);
+	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI_DIV_2, LL_RCC_PLL_MUL_12);
 
 	LL_RCC_PLL_Enable();
 	while (LL_RCC_PLL_IsReady() != 1);

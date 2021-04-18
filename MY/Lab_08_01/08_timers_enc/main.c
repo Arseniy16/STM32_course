@@ -1,6 +1,6 @@
 /*
  * This project is Lab08-01
- * This program shows the rotation of encoder in degree in 7-segment indicator
+ * This program shows the rotation of encoder in degree on 7-segment indicator
  */
 #include "stm32f0xx_ll_rcc.h"
 #include "stm32f0xx_ll_system.h"
@@ -58,8 +58,7 @@ static void rcc_config()
 	while (LL_RCC_HSI_IsReady() != 1);
 
 	/* Main PLL configuration and activation */
-	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI_DIV_2,
-								LL_RCC_PLL_MUL_12);
+	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI_DIV_2, LL_RCC_PLL_MUL_12);
 
 	LL_RCC_PLL_Enable();
 	while (LL_RCC_PLL_IsReady() != 1);

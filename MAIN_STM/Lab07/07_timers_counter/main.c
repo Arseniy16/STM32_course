@@ -215,20 +215,20 @@ void TIM2_IRQHandler(void)
  */
 static void systick_config(void)
 {
-    LL_InitTick(48000000, 1000);
-    LL_SYSTICK_EnableIT();
-    NVIC_SetPriority(SysTick_IRQn, 1);
-    return;
+	LL_InitTick(48000000, 1000);
+	LL_SYSTICK_EnableIT();
+	NVIC_SetPriority(SysTick_IRQn, 1);
+	return;
 }
 /*
  * Handler for system timer
  */
 void SysTick_Handler(void)
 {
-   	if(button_set) count++;
-    dec_display(count);    
-
-    return;
+	if(button_set) count++;
+	dec_display(count);    
+	
+	return;
 }
 
 int main(void)
