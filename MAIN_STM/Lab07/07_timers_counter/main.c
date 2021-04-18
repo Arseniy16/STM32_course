@@ -14,7 +14,7 @@
 
 /*---------------------------------------------*/
 /*
- * This is a special bit_mask to turn on segments on an indicator 
+ * This is a special bit_mask to turn on segments on indicator 
  */
 #define bits(PIN_7, PIN_6, PIN_5, PIN_4, PIN_3, PIN_2, PIN_1, PIN_0) \
 	((PIN_7) * (LL_GPIO_PIN_7) | \
