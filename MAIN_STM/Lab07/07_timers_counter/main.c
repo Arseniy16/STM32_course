@@ -161,23 +161,23 @@ static void timers_config(void)
      * Configure input channel
      */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
-    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_5, LL_GPIO_MODE_ALTERNATE);
+
+    LL_GPIO_SetPinMode  (GPIOA, LL_GPIO_PIN_5, LL_GPIO_MODE_ALTERNATE);
     LL_GPIO_SetAFPin_0_7(GPIOA, LL_GPIO_PIN_5, LL_GPIO_AF_2);
-    LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_5, LL_GPIO_PULL_UP);
+    LL_GPIO_SetPinPull  (GPIOA, LL_GPIO_PIN_5, LL_GPIO_PULL_UP);
     /*
      * Setup timer to capture input mode
      */
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
-    LL_TIM_SetPrescaler(TIM2, 47999);
-    LL_TIM_IC_SetFilter(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_FILTER_FDIV32_N8);
-    LL_TIM_IC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1,
-                          LL_TIM_IC_POLARITY_BOTHEDGE);
-    LL_TIM_IC_SetActiveInput(TIM2, LL_TIM_CHANNEL_CH1,
-                             LL_TIM_ACTIVEINPUT_DIRECTTI);
-    LL_TIM_IC_SetPrescaler(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_ICPSC_DIV1);
-    LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
-    LL_TIM_EnableIT_CC1(TIM2);
-    LL_TIM_EnableCounter(TIM2);
+
+    LL_TIM_SetPrescaler     (TIM2, 47999);
+    LL_TIM_IC_SetFilter     (TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_FILTER_FDIV32_N8);
+    LL_TIM_IC_SetPolarity   (TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_POLARITY_BOTHEDGE);
+    LL_TIM_IC_SetActiveInput(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_ACTIVEINPUT_DIRECTTI);
+    LL_TIM_IC_SetPrescaler  (TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_ICPSC_DIV1);
+    LL_TIM_CC_EnableChannel (TIM2, LL_TIM_CHANNEL_CH1);
+    LL_TIM_EnableIT_CC1     (TIM2);
+    LL_TIM_EnableCounter    (TIM2);
     /*
      * Setup NVIC
      */ 

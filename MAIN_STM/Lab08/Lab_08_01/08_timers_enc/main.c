@@ -12,6 +12,15 @@
 #include "stm32f0xx_ll_utils.h"
 #include "stm32f0xx_ll_cortex.h"
 
+//////////////////////////////////////////////////
+/*---------------CONST VARIABLES--------------- */
+//////////////////////////////////////////////////
+//accuracy of encoder
+const uint8_t COUNT_ENCODER = 95;
+//turn on this angle
+const uint8_t DEGREE = 360;
+//////////////////////////////////////////////////
+
 /*--------------------------------------------- */
 /*
  * This is a special bit_mask to turn on segments on an indicator 
@@ -178,7 +187,7 @@ static void timers_config(void)
     LL_TIM_SetEncoderMode(TIM2, LL_TIM_ENCODERMODE_X4_TI12); // 3
     //LL_TIM_IC_SetFilter(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_IC_FILTER_FDIV16_N5);
     //LL_TIM_IC_SetFilter(TIM2, LL_TIM_CHANNEL_CH2, LL_TIM_IC_FILTER_FDIV16_N5);
-    LL_TIM_SetAutoReload(TIM2, 95); //count contacts on encoder (for 1 rotation of encoder) 
+    LL_TIM_SetAutoReload(TIM2, COUNT_ENCODER); //count contacts on encoder (for 1 rotation of encoder) 
     LL_TIM_EnableCounter(TIM2);
     return;
 }
@@ -199,7 +208,7 @@ static void systick_config(void)
 void SysTick_Handler(void)
 {
     //display encoder rotation in degree (0-360)
-    dec_display((uint32_t)(LL_TIM_GetCounter(TIM2) / 95.0 * 360)); 
+    dec_display((uint32_t)(LL_TIM_GetCounter(TIM2) / (double)COUNT_ENCODER * DEGREE)); 
     return;
 }
 /*---------------------------------------------*/

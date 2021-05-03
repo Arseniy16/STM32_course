@@ -202,9 +202,12 @@ static void timers_config_PWM(void)
     /*
      * Setup timer to output compare mode
      */
+
+     //48 1000000
+
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM3);
-    LL_TIM_SetPrescaler(TIM3, 479);
-    LL_TIM_SetAutoReload(TIM3, 999); //output freq = 100 Gz
+    LL_TIM_SetPrescaler(TIM3, 47); 
+    LL_TIM_SetAutoReload(TIM3, 9999); //output freq = 100 Gz
     LL_TIM_OC_SetCompareCH1(TIM3, 965); //this value for max volume of piezo speaker
     LL_TIM_CC_EnableChannel(TIM3, LL_TIM_CHANNEL_CH1);
     LL_TIM_OC_SetPolarity(TIM3, LL_TIM_CHANNEL_CH1, LL_TIM_OCPOLARITY_HIGH);
@@ -241,7 +244,8 @@ void SysTick_Handler(void)
     LL_TIM_OC_SetCompareCH1(TIM3, (uint32_t)(0.965 * LL_TIM_GetCounter(TIM2))); //do always max volume on piezo
     LL_TIM_SetAutoReload(TIM3, LL_TIM_GetCounter(TIM2));  //change ARR to change frequency
     
-    dec_display((uint32_t)(100000 / LL_TIM_GetCounter(TIM2))); //show the frequency on indicator
+    //show on indicator in 10^2 kGz
+    dec_display((uint32_t)(10000 / LL_TIM_GetCounter(TIM2))); //show the frequency on indicator
     return;
 }
 /*---------------------------------------------*/
